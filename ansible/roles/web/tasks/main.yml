@@ -1,0 +1,13 @@
+---
+# WEB
+#
+# Load webserver (Apache, nginx, etc)
+#
+ 
+- name: Install Apache
+  apt: name=apache2 state=present update_cache=yes
+  become: True
+
+- name: Start Apache
+  become: True
+  service: name=apache2 state=restarted enabled=yes

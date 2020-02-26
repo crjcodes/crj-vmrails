@@ -1,0 +1,43 @@
+---
+
+#------------------------------------------- 
+# Dev workspace
+
+
+#- name: make shared file folder
+#  file:
+#    path: /home/vagrant/code
+#    state: absent    
+
+#------------------------------------------- 
+#  AFFIRM
+#
+
+- name: clone affirm project from github
+  git:
+    repo: https://github.com/crjcodes/affirm.git
+    dest: "{{ app_path }}"
+  become: yes
+  become_user: vagrant
+  ignore_errors: True
+  register: affirm_result
+
+# warn if the git clone failed due to new changes locally
+
+- name: fail if not changed local stuff
+  fail:
+    msg: "{{ affirm_result.msg }}"
+  when: "'Local' not in affirm_result.msg"
+
+- name: Ensure dependencies there for the "{{ app_path }}"
+  shell: bash -lc "cd {{ app_path }}; bundle install"
+  become: yes
+  become_user: vagrant
+
+# TBD: need [gem install sqlite3]?
+
+- name: "A final attempt at Yarn updates"
+  command: 'cd "{{ app_path }}"; yarn install --check-files'
+  become: yes
+  become_user: vagrant
+

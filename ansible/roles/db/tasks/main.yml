@@ -1,0 +1,23 @@
+---
+# DB
+#
+# Installs DB choices
+
+- name: sqlite3
+  apt: 
+    pkg:  [ 'libsqlite3-dev', 'sqlite3']
+  become: True
+
+- name: Install PostgreSQL
+  apt: 
+    pkg: [ 'postgresql', 'postgresql-contrib', 'libpq-dev', 'python-psycopg2'] 
+    update_cache: yes 
+    state: present
+  become: True
+
+- name: Ensure the PostgreSQL service is running
+  service: 
+    name:  postgresql 
+    state: started 
+    enabled: yes
+

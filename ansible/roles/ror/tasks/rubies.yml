@@ -1,0 +1,96 @@
+---
+
+#===========================================
+# Install ruby versions specified
+
+# this task serves to populate the register variable
+
+- name: Detect if rubies are installed
+  command: '{{ rvm1_rvm }} {{ item }} do true'
+  with_items: '{{ rvm1_rubies }}'
+  changed_when: False
+  failed_when: False
+  when: rvm1_rubies | bool
+  register: detect_rubies_result
+
+# check for error by the return code from the rvm install command
+
+- name: Install rubies
+  command: '{{ rvm1_rvm }} install {{ item.item }} {{ rvm1_ruby_install_flags }}'
+  with_items: '{{ detect_rubies_result.results }}'
+  register: install_rubies_result
+  failed_when: ( install_rubies_result.rc != 0 )
+
+#    {{ rvm1_rvm }} list strings | grep {{ item }} | tail -n 1
+
+- name: Are all requested rubies installed successfully?
+  shell: >
+    {{ rvm1_rvm }} list strings | grep {{ item }}
+  with_items: '{{ rvm1_rubies }}'
+  register: ruby_ver_requested_and_installed   
+  failed_when: item not in ruby_ver_requested_and_installed.stdout
+
+#===========================================
+# Set default version of ruby as specified
+
+# assumption: if rvm will error out, it will do so with the 'rvm install...' cmd
+#  and if the rvm install command works, the 'rvm alias list default' should work as well
+
+- name: Detect default ruby version
+  command: '{{ rvm1_rvm }} list default'
+  register: detect_default_ruby_version
+
+# Because of the sometimes-encountered error, 
+# "RVM is not a function, selecting rubies with 'rvm use ...' will not work."," 
+# use alias per https://rvm.io/rubies/default
+
+- name: If the desired default ruby not detected, set the desired as the default
+  command: '{{ rvm1_rvm }} alias create default {{ rvm1_default_ruby_version }}'
+  when: detect_default_ruby_version.stdout|default() == '' or
+        rvm1_default_ruby_version not in detect_default_ruby_version.stdout
+
+- name: Checking default ruby version after selection
+  command: '{{ rvm1_rvm }} alias list default'
+  register: detect_default_ruby_version_after_selection
+  when: detect_default_ruby_version.stdout|default() == '' or
+        rvm1_default_ruby_version not in detect_default_ruby_version.stdout
+
+- name: Was the default selected successfully?
+  fail:
+    msg: "Whoops! Unable to confirm default ruby is selected"
+  when: 
+    (detect_default_ruby_version.stdout|default() == '' or
+     rvm1_default_ruby_version not in detect_default_ruby_version.stdout) and
+    (detect_default_ruby_version_after_selection.stdout|default() == '' or
+        rvm1_default_ruby_version not in detect_default_ruby_version_after_selection.stdout)
+
+#===========================================
+# Bundler
+
+# If requested, install bundler for each ruby targeted by ruby list specificed by ansible variable
+# if the ruby version was successfully installed above
+
+# if no error, check each of the requested and installed ruby versions
+# and ensure bundler is installed if requested
+
+- name: Install bundler if not installed
+  shell: >
+    ls {{ rvm1_install_path }}/wrappers/{{ item }}
+    | if ! grep "^bundler " ; then {{ rvm1_install_path }}/wrappers/{{ item }}/gem install bundler ; fi
+  args:
+    creates: '{{ rvm1_install_path }}/wrappers/{{ item }}/bundler'
+  with_items: '{{ rvm1_rubies }}'
+  register: bundler_install
+  when: 
+    - rvm1_bundler_install == True 
+  failed_when: 
+    - bundler_install.rc != 0
+
+#----------------------------------------------------
+# Note: Rails installed in the framework task after nodejs and yarn
+
+
+#===========================================
+# Symlinks
+#   moved to last step in main
+

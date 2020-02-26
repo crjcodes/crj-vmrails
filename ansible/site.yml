@@ -1,0 +1,16 @@
+---
+# This playbook deploys the whole application stack for
+# developing and deploying RoR CRUD apps
+
+- hosts: all
+  connection: local
+
+  vars:
+    vm_env: dev
+
+  roles:
+    - common
+    - web
+    - db
+    - ror
+    - personalize

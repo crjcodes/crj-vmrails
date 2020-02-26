@@ -1,0 +1,8 @@
+---
+
+db: postgres
+db_admin_user: postgres
+db_user: vagrant
+db_password: vagrant
+
+

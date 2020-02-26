@@ -1,0 +1,120 @@
+---
+
+# Install 1 or more versions of ruby
+# The last ruby listed will be set as the default ruby
+rvm1_rubies: [ "ruby-2.6.4" ]
+
+# Install bundler
+rvm1_bundler_install: True
+
+# Install rails
+rvm1_rails_install: True
+
+# Delete a specific version of ruby (ie. ruby-2.1.0)
+rvm1_delete_ruby:
+
+# Install path for rvm (defaults to user based install)
+rvm1_install_path: '~/.rvm'
+
+# Add or remove any install flags
+# NOTE: If you are doing a ROOT BASED INSTALL then
+#       make sure you REMOVE the --user-install flag below
+rvm1_install_flags: '--auto-dotfiles --user-install'
+
+# Add additional ruby install flags
+rvm1_ruby_install_flags:
+
+# Set the owner for the rvm directory
+#rvm1_user: 'ubuntu'
+#rvm1_user: 'root'
+rvm1_user: 'vagrant'
+
+# URL for the latest installer script
+rvm1_rvm_latest_installer: 'https://raw.githubusercontent.com/rvm/rvm/master/binscripts/rvm-installer'
+
+# rvm version to use
+rvm1_rvm_version: 'stable'
+
+# Check and update rvm, disabling this will force rvm to never update
+rvm1_rvm_check_for_updates: True
+
+# GPG key verification, use an empty string if you want to skip this
+# Note: Unless you know what you're doing, just keep it as is
+#           Identity proof: https://keybase.io/mpapis
+#           PGP message: https://rvm.io/mpapis.asc
+rvm1_gpg_keys: '409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB'
+
+# The GPG key server
+rvm1_gpg_key_server: 'hkp://pool.sks-keyservers.net'
+
+# The GPG alternative key servers
+rvm1_gpg_key_servers:
+  - '{{ rvm1_gpg_key_server }}'
+  - hkp://ipv4.pool.sks-keyservers.net
+  - hkp://pgp.mit.edu
+  - hkp://keyserver.pgp.com
+
+# autolib mode, see https://rvm.io/rvm/autolibs
+rvm1_autolib_mode: 3
+
+# Name of UID 0 user
+root_user: 'root'
+
+# Name of GID 0 group -- BSD systems typically use wheel instead of root
+root_group: '{{ root_user }}'
+
+#=======================================
+# Defaults for nodejs, rails, and more
+
+# see rvm task's default main.yml for ruby versions installed
+
+nodejs_ver: "13.x"
+rails_ver: "6.0.0"
+
+# TODO: usr path should be common to all Ansible files, not just
+# this task
+
+usr_path: /home/vagrant
+
+yarn_shell_profiles:
+  - .profile
+  
+yarn_global_path: /usr/local/share/chruby
+#yarn_global_packages:
+  #- name: gulp
+  #upgrade: true
+  #- name: yosay
+  #  upgrade: true
+
+#==============================
+# REGISTERED VARIABLES
+#
+# TODO: not a compplete list
+
+# It's considered good practice to set defaults for register variables
+
+# whether the rvm binary is already installed when the ansible playbook is run
+rvm_binary_preinstalled: false
+
+# whether we installed the rvm binary for the first time on the vm this execution
+rvm_binary: false
+
+# whether the rvm installer is already installed when the ansible playbook is run
+rvm_installer_oreinstalled: false
+
+
+detect_rubies_result: false
+install_rubies_result: false
+detect_default_ruby_version: false
+detect_default_ruby_version_after_selection: false
+ruby_ver_requested_and_installed: false
+bundler_install: false
+rails_install: false
+symlink_setup: false
+
+bundler_install.rc: 0
+rails_install.rc: 0
+symlink_setup.rc: 0
+
+
+

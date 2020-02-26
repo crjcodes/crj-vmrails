@@ -1,0 +1,58 @@
+---
+
+- name: Install RVM
+  become: yes
+  become_user: '{{ rvm1_user }}'
+  import_tasks: 'rvm.yml'
+
+# this step does not include rails; see further below
+
+- name: Install Ruby and Gems
+  become: yes
+  become_user: '{{ rvm1_user }}'
+  import_tasks: 'rubies.yml'
+
+# need a Javascript runtime to compile the Rails asset pipeline
+# Node.js best for Ubuntu per https://www.howtoforge.com/tutorial/ubuntu-ruby-on-rails/
+
+- name: Install nodejs
+  import_tasks: nodejs-install.yml
+
+# rails new <appname>... requires yarn
+
+- name: Install yarn
+  import_tasks: yarn-install.yml
+
+# follows the bundler-install model inside rubies.yml 
+
+- name: Install rails
+  shell: >
+    ls {{ rvm1_install_path }}/wrappers/{{ item }}
+    | if ! grep "^rails " ; then {{ rvm1_install_path }}/wrappers/{{ item }}/gem install rails -v {{ rails_ver }}; fi
+  args:
+    creates: '{{ rvm1_install_path }}/wrappers/{{ item }}/rails'
+  with_items: '{{ rvm1_rubies }}'
+  register: rails_install
+  when: 
+    - rvm1_rails_install == True 
+  failed_when: 
+    - rails_install.rc != 0
+
+
+
+
+#------------------------------------------- 
+# Symlinks
+#
+
+- name: Symlink ruby related binaries on the system path
+  file:
+    state: 'link'
+    src: '{{ rvm1_install_path }}/wrappers/default/{{ item }}'
+    dest: '{{ rvm1_symlink_to }}/{{ item }}'
+    owner: '{{ root_user }}'
+    group: '{{ root_group }}'
+  when: not '--user-install' in rvm1_install_flags
+  with_items: '{{ rvm1_symlink_binaries }}'
+  register: symlink_setup
+  failed_when: symlink_setup.rc != 0

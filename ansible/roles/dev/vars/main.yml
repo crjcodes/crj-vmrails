@@ -1,0 +1,16 @@
+---
+
+# TBD: hardcode dependencies?
+# dependent on ruby and rails and node js and yarn
+
+app_name: affirm
+affirm_result: true
+
+app_env: dev
+work_path: /home/vagrant/code
+app_path: /home/vagrant/code/affirm
+
+app_db_user: aff
+
+# app dependencies?  See dev task 
+# gem dependencies? see playbook
