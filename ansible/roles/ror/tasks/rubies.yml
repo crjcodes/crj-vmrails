@@ -21,8 +21,6 @@
   register: install_rubies_result
   failed_when: ( install_rubies_result.rc != 0 )
 
-#    {{ rvm1_rvm }} list strings | grep {{ item }} | tail -n 1
-
 - name: Are all requested rubies installed successfully?
   shell: >
     {{ rvm1_rvm }} list strings | grep {{ item }}

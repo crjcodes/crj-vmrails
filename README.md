@@ -1,33 +1,26 @@
 # Purpose
-Builds a Ruby on Rails development virtual machine. 
+Allows for the development and deployment and use of files that will build a Ubuntu virtual machine for a Ruby-on-Rails development platform using Ansible for the provisioning.
 
-## Tutorial
-This project accompanies the tutorial available at {TBD}.  
-
-See the tutorial for additional information.
+This project accompanies the tutorial available at https://codeonward.com/series/ubuntu-rails-vm-tutorial/.  
 
 # Specs
-Vagrant virtual machine
-* Run on a Windows 10 PC
-* Deployed with ubuntu/xenial64, web server, database, ruby, and rails.
+* Vagrant virtual machine hosted on a Windows 10 PC
 * Used in conjunction with Visual Studio Code and Git (Git for Bash optional)
 
-## Vagrant
+See the Vagrantfile for details on port and ip specifications, shared folders, CPUs used, memory, and more.
 
-See the .Vagrantfile for details on port and ip specifications, shared folders, CPUs used, memory, and more.
-
-# Provisioning the Virtual Machine
+## Provisioning the Virtual Machine
 
 * OS and apt automatically updated when possible
-* APT as the mechanism to install
+* APT as the mechanism to install (with a few exceptions to be updated)
 * Common tools include only bash, openssl, git, and curl as of this edit
-* ruby-install and chruby are used as the RoR installers
-* complex sections are in their own yml file but included instead of referenced as ansible sub-roles or sub-tasks
-* only one ruby version installed by this script, per the variable yml; you can add your own via chruby
+* Rvm is used as the RoR installer
+* Complex sections are in their own yml file
+* Pnly one ruby version installed by this script but more are easily added
 
-# Tested
+# Testing
 
-* Not all branches of possible errors have been tested.  See flowchart below {TBD}.
+* Not all branches of possible errors have been tested.  See flowchart in the associated tutorial.
 
 # A Beginner's Guide to Troubleshooting
 
@@ -46,11 +39,24 @@ See the .Vagrantfile for details on port and ip specifications, shared folders, 
 ## Vagrant References
 
 * For a complete Vagrant reference, please see the online documentation at
-* https://docs.vagrantup.com.
+  https://docs.vagrantup.com.
 
-* Every Vagrant development environment requires a box. You can search for
-* boxes at https://vagrantcloud.com/search.
+* Every Vagrant development environment requires a box. If you want to switch out 
+  the box used here, you can search for other boxes at 
+  https://vagrantcloud.com/search.
+
+* Getting started: https://www.vagrantup.com/intro/getting-started/
+
+* Guide on using Ansible: https://www.vagrantup.com/docs/provisioning/ansible.html
+
 
 ## Ansible References
-* Vagrant's guide on using Ansible: https://www.vagrantup.com/docs/provisioning/ansible.html
 * Ansible's guide on using Vagrant: https://docs.ansible.com/ansible/latest/scenario_guides/guide_vagrant.html
+
+* Github's Ansible issues: https://github.com/ansible/ansible-modules-core/issues/
+
+## RVM 
+* At https://rvm.io
+* Official RVM Ansible tutorial: https://github.com/rvm/rvm1-ansible
+* The How-To Forge tutorial at https://www.howtoforge.com/tutorial/ubuntu-ruby-on-rails/
+
